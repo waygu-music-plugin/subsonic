@@ -41,8 +41,8 @@ github.com/stretchr/testify v1.7.2 h1:4jaiDzPyXQvSd7D0EjG45355tLlV3VOECpq10pLC+8
 github.com/stretchr/testify v1.7.2/go.mod h1:R6va5+xMeoiuVRoj+gSkQ7d3FALtqAAGI1FQKckRals=
 github.com/supersonic-app/go-subsonic v0.0.0-20260807144657-acbe3dde04b7 h1:ZWSKfjr03lMF1mB2IrZEcvem0rCH74qq7ymSS2rxV/A=
 github.com/supersonic-app/go-subsonic v0.0.0-20260807144657-acbe3dde04b7/go.mod h1:ClhAgC2qobwH19D6kdwULLYSHlOmldDGkdu2G2Z0Ijo=
-github.com/waygu-music-plugin/sdk v0.1.0 h1:MAvxJeKJjn/e5ZBXN6YCGMRAhmAP1Ak/hkSPoLk0G1Q=
-github.com/waygu-music-plugin/sdk v0.1.0/go.mod h1:DM3brkozsloBHVJ0nmVwzAKKV8V2JZRNf8EFAGsJI3M=
+github.com/waygu-music-plugin/sdk v0.1.1 h1:l2dCEZp9m4aRJR8cTp6fgy+Ujtw9USOtptgHjrS3CaA=
+github.com/waygu-music-plugin/sdk v0.1.1/go.mod h1:IRNYpLXVtWEJj4crqSflLSqadDhDRGkotN3CEnzKTtY=
 golang.org/x/image v0.46.0 h1:b1+oYj0Jbp6K5MDT4i4/eZpYlk3V8SJhhDKh6LBHAyQ=
 golang.org/x/image v0.46.0/go.mod h1:3B3W05VGVQyuXucLINLjXKrqISASfi4Xj+iCVkLMwew=
 golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=

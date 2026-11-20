@@ -4,6 +4,9 @@ import (
 	"fmt"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/waygu-music-plugin/sdk/desktop"
+
+	backend "github.com/waygu-music-plugin/subsonic/internal/client"
 )
 
 func (h *Home) Settings(c *ui.Context) {
@@ -16,6 +19,9 @@ func (h *Home) Settings(c *ui.Context) {
 	ui.Scroll(c).Fill().Padding(24, 28, 32, 28).Gap(8).Children(func() {
 		ui.Text(c, prof.Name).FontSize(12).FontWeight(600).TextColor(t.TextMuted).Margin(14, 4, 4, 4)
 		ui.Column(c).Radius(12).Background(t.Background).Border(1, t.Border).Dividers(1, t.Border).Children(func() {
+			if switcher, ok := h.host.(desktop.PluginEntrySwitcher); ok && switcher.CanSwitchPluginEntry() {
+				h.connectionType(c, switcher, prof)
+			}
 			var cfg connectionConfig
 			if h.runtime != nil {
 				cfg = h.runtime.Config()
@@ -60,6 +66,26 @@ func (h *Home) Settings(c *ui.Context) {
 		h.desktopSettings(c)
 	})
 	h.connectionDialog(c)
+}
+
+func (h *Home) connectionType(c *ui.Context, switcher desktop.PluginEntrySwitcher, current backend.Profile) {
+	profiles := []backend.Profile{backend.ProfileSubsonic, backend.ProfileNavidrome, backend.ProfileJellyfin, backend.ProfileGonic}
+	labels := make([]string, len(profiles))
+	for i, profile := range profiles {
+		labels[i] = profile.Name
+	}
+	selected := current.Name
+	ui.Row(c).Padding(12, 16).Gap(12).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, "连接类型").Grow(1).FontSize(13.5).FontWeight(500)
+		if ui.Select(c.Key("connection-type"), &selected, labels).Label("连接类型").Width(170).Changed() {
+			for i, label := range labels {
+				if selected == label && profiles[i].ID != current.ID {
+					switcher.SwitchPluginEntry(string(profiles[i].ID))
+					break
+				}
+			}
+		}
+	})
 }
 
 func (h *Home) transcodeSettings(c *ui.Context, t ui.Theme) {

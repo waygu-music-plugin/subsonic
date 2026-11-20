@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           repository: waygu-music-plugin/registry
-          ref: e0229901a750e055196f5fde3f8db79662193aa6
+          ref: 4fe4e74e2891ffdbb43936a7d24078336e5c4258
           path: .release-tool
           persist-credentials: false
       - name: Verify plugin
