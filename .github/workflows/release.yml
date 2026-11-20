@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to build and release
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GOWORK: "off"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/checkout@v7
+        with:
+          repository: waygu-music-plugin/registry
+          ref: e0229901a750e055196f5fde3f8db79662193aa6
+          path: .release-tool
+          persist-credentials: false
+      - name: Verify plugin
+        run: |
+          test "$(git rev-parse "refs/tags/$TAG^{commit}")" = "$(git rev-parse HEAD)"
+          go test -mod=readonly ./...
+      - name: Cross-build and sign six targets
+        env:
+          PLUGIN_SIGNING_KEY: ${{ secrets.PLUGIN_SIGNING_KEY }}
+        run: |
+          test -n "$PLUGIN_SIGNING_KEY"
+          umask 077
+          key=$(mktemp "$RUNNER_TEMP/plugin-key.XXXXXX")
+          trap 'rm -f -- "$key"' EXIT
+          printf '%s\n' "$PLUGIN_SIGNING_KEY" > "$key"
+          python3 .release-tool/build_release.py --source . --tag "$TAG" --key "$key" --out "$RUNNER_TEMP/plugin-assets"
+          (cd "$RUNNER_TEMP/plugin-assets" && sha256sum -c SHA256SUMS)
+      - name: Publish official plugin release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if visibility=$(gh release view "$TAG" -R "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2>/dev/null); then
+            test "$visibility" = true
+          else
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --verify-tag --draft --title "$TAG" \
+              --notes 'Wagyu Music 插件协议 v1，提供 Windows、macOS 和 Linux 的 amd64、arm64 版本。'
+          fi
+          cd "$RUNNER_TEMP/plugin-assets"
+          gh release upload "$TAG" -R "$GITHUB_REPOSITORY" --clobber ./*.zip manifest.json catalog.json SHA256SUMS
+          gh release edit "$TAG" -R "$GITHUB_REPOSITORY" --draft=false --latest
