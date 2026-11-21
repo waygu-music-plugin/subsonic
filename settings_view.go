@@ -7,6 +7,7 @@ import (
 
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
+	"github.com/waygu-music-plugin/sdk/desktop"
 
 	"github.com/waygu-music-plugin/sdk/pluginapi"
 )
@@ -99,6 +100,30 @@ func (h *Home) desktopSettings(c *ui.Context) {
 					apply()
 				}
 			})
+		})
+	}
+	if state.DesktopLyricsColorAvailable || state.StatusLyricsAvailable || state.LyricsFontAvailable {
+		group("歌词", func() {
+			if state.LyricsFontAvailable {
+				row("shared-lyrics-font-family", "歌词字体", "", func() {
+					desktop.LyricsFontFamilyControl(c.Key("lyrics-font-family"), h.host, state)
+				})
+			}
+			if state.DesktopLyricsColorAvailable {
+				row("shared-lyrics-color", "桌面歌词颜色", "", func() {
+					desktop.LyricsColorControl(c.Key("desktop-lyrics-color"), h.host, state, h.desktopLyricsPreset(h.host.DesktopLyricsState().Color))
+				})
+			}
+			if state.StatusLyricsAvailable {
+				row("shared-status-lyrics", "任务栏歌词", "在系统任务栏或菜单栏显示歌词", func() {
+					desktop.StatusLyricsControl(c.Key("status-lyrics"), h.host, state)
+				})
+			}
+			if state.TaskbarLyricsFontSize > 0 {
+				row("shared-taskbar-lyrics-font", "任务栏歌词字号", "", func() {
+					desktop.TaskbarLyricsFontControl(c.Key("taskbar-lyrics-font"), h.host, state)
+				})
+			}
 		})
 	}
 	if state.NotchAvailable {
