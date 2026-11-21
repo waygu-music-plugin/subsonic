@@ -24,6 +24,9 @@ const npSettle = 600 * time.Millisecond
 func (view *Home) npState(c *ui.Context) (open, settled bool) {
 	open = view.nowPlaying && view.host.Playback().Current() != nil
 	now := c.Now()
+	if !open {
+		view.fullscreen.restore()
+	}
 	if open != view.npOpen {
 		view.npOpen, view.npChangedAt = open, now
 		// A build once it is at rest: to stop painting what it covers, or
@@ -117,6 +120,7 @@ func (view *Home) nowPlayingBody(c *ui.Context, tr *pluginapi.Track, art plugina
 				}
 			})
 		})
+		view.fullscreen.button(c, w, pointerIn, view.npPane == paneLyrics || view.npPane == paneStage)
 		if view.npPane == paneStage {
 			// The stage takes the whole view: the lyrics are the show, the
 			// controls a slim bar at the foot.

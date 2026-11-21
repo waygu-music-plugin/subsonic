@@ -26,7 +26,12 @@ func startProfile(start pluginapi.Startup, profile backend.Profile) pluginapi.Ad
 			adapter.state.Catalog().activate(ctx)
 			adapter.home.ResetNavigation(Route{Page: PageLibrary})
 		},
-		Ready: func(event pluginapi.Activation) { adapter.connectOnActivation(event, playback) },
+		Ready: func(event pluginapi.Activation) {
+			if event.Main != nil {
+				adapter.home.fullscreen.bind(event.Main, adapter.home.host.Invalidate)
+			}
+			adapter.connectOnActivation(event, playback)
+		},
 		Deactivate: func(switching bool) {
 			adapter.home.CloseTransient()
 			if switching {

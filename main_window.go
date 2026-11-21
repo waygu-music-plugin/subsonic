@@ -12,6 +12,7 @@ import (
 )
 
 type playbackView struct {
+	fullscreen                    playbackFullscreen
 	pal                           palette
 	settings                      pluginapi.Presentation
 	volume                        float64
@@ -46,6 +47,7 @@ type playbackView struct {
 }
 
 func (h *Home) closePlaybackView() {
+	h.fullscreen.restore()
 	if h.npOpen {
 		h.host.SetMainWindowButtonsTheme(mygo.ThemeSystem)
 	}
@@ -135,7 +137,11 @@ func (h *Home) shortcuts(c *ui.Context, pl pluginapi.PlaybackControls) {
 		h.searchInput.Focus(c)
 	})
 	if h.nowPlaying {
-		c.OnShortcut(0, ui.KeyEscape, func() { h.nowPlaying = false })
+		c.OnShortcut(0, ui.KeyEscape, func() {
+			if !h.fullscreen.escape() {
+				h.nowPlaying = false
+			}
+		})
 		if pl.Current() != nil {
 			for i, tab := range h.npTabs() {
 				c.OnShortcut(ui.Cmd, ui.Key1+ui.Key(i), func() { h.choosePane(tab.pane) })
