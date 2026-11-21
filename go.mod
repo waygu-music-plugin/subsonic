@@ -5,7 +5,7 @@ go 1.27.3
 require (
 	github.com/egoist/mygo v0.10.0
 	github.com/supersonic-app/go-subsonic v0.0.0-20260807144657-acbe3dde04b7
-	github.com/waygu-music-plugin/sdk v0.1.1
+	github.com/waygu-music-plugin/sdk v0.1.2
 	golang.org/x/image v0.46.0
 )
 
