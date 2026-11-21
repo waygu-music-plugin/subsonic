@@ -112,26 +112,6 @@ func (h *Home) accountRow(c *ui.Context, username, status string, actions []Acco
 	})
 }
 
-func (h *Home) sidebarNowPlaying(c *ui.Context, tr *pluginapi.Track) {
-	p := paletteFor(c.Theme())
-	card := ui.ButtonBase(c.Key("np-card")).Gap(10).Padding(8).Radius(12).AlignItems(ui.Center).FocusRing(false).Label("正在播放")
-	bg := p.hover
-	if card.Hovered() {
-		bg = p.press
-	}
-	card.Background(card.AnimateColor("bg", bg, ui.Animation{Duration: 120 * time.Millisecond}))
-	card.Children(func() {
-		h.cover(c, tr.Album.PicURL, 96, 40, 6).Shadow(0, 2, 6, 0, p.cardShade)
-		ui.Column(c).Grow(1).Shrink(1).MinWidth(0).Gap(2).Children(func() {
-			ui.Text(c, tr.Name).FontSize(12.5).FontWeight(600).SingleLine()
-			h.artistLinks(c, tr, p.muted, p.text).FontSize(11.5).SingleLine()
-		})
-	})
-	if card.Clicked() {
-		h.nowPlaying = true
-	}
-}
-
 func menuItem(c *ui.Context, icon *ui.SVG, label, shortcut string) ui.Element {
 	p := paletteFor(c.Theme())
 	b := ui.ButtonBase(c.Key(label)).Role(ui.RoleMenuItem).Label(label).Height(30).PaddingX(8).Gap(9).Radius(7).

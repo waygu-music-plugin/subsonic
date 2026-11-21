@@ -50,12 +50,6 @@ func (h *Home) sidebar(c *ui.Context) {
 		}
 	})
 
-	if player := h.host.Player(); player != nil {
-		if tr := player.Current(); tr != nil {
-			h.sidebarNowPlaying(c, tr)
-		}
-	}
-
 	cfg := toConnectionConfig(h.state.Config())
 	username, status := cfg.Username, "未连接"
 	if h.state.Connecting() {
